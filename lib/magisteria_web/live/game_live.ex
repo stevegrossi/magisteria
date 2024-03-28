@@ -26,18 +26,19 @@ defmodule MagisteriaWeb.GameLive do
     <%= if connected?(@socket) do %>
       <header class="Header">
         <h1 class="Logo">MagISTerIA</h1>
-        <%= for {player_num, player} <- @state.players do %>
-          <div class={
+        <div
+          :for={{player_num, player} <- @state.players}
+          class={
             if player_num == @state.current_player,
               do: "Player Player--#{player_num} Player--active",
               else: "Player Player--#{player_num}"
-          }>
-            <div class="Player-name">
-              Player <%= player_num %> <%= if player.ai, do: " 🤖" %>
-            </div>
-            <div class="Player-hp"><%= player.hp %></div>
+          }
+        >
+          <div class="Player-name">
+            Player <%= player_num %> <%= if player.ai, do: " 🤖" %>
           </div>
-        <% end %>
+          <div class="Player-hp"><%= player.hp %></div>
+        </div>
       </header>
       <%= if @state.winning_player do %>
         <div class="Winner">
@@ -60,9 +61,7 @@ defmodule MagisteriaWeb.GameLive do
         </section>
         <section class="PlayBoard">
           <ul class="CardList">
-            <%= for card <- @state.cards_played do %>
-              <li><.card card={card} /></li>
-            <% end %>
+            <li :for={card <- @state.cards_played}><.card card={card} /></li>
           </ul>
           <div class="Resources">
             <div class="Resources-resource">
@@ -80,7 +79,7 @@ defmodule MagisteriaWeb.GameLive do
               </div>
             </div>
             <button
-              :if={@state.hands[@state.current_player] != []}
+              :if={not discard_required?(@state) and @state.hands[@state.current_player] != []}
               class="ActionButton"
               phx-click="play_all"
             >
@@ -107,19 +106,16 @@ defmodule MagisteriaWeb.GameLive do
             </section>
           <% end %>
           <ul class="CardList">
-            <%= for {card, index} <- Enum.with_index(@state.hands[@state.current_player]) do %>
-              <li
-                phx-click={if discard_required?(@state), do: "discard", else: "play_card"}
-                phx-value-index={index}
-              >
-                <.card card={card} />
-              </li>
-            <% end %>
+            <li
+              :for={{card, index} <- Enum.with_index(@state.hands[@state.current_player])}
+              phx-click={if discard_required?(@state), do: "discard", else: "play_card"}
+              phx-value-index={index}
+            >
+              <.card card={card} />
+            </li>
           </ul>
           <ul class="StackedCardList">
-            <%= for card <- @state.discard_piles[@state.current_player] do %>
-              <li><.card card={card} /></li>
-            <% end %>
+            <li :for={card <- @state.discard_piles[@state.current_player]}><.card card={card} /></li>
           </ul>
           <div class="CardBack CardList-right">
             <span class="CardCount"><%= length(@state.draw_piles[@state.current_player]) %></span>
