@@ -38,6 +38,9 @@ defmodule MagisteriaWeb.GameLive do
             Player <%= player_num %> <%= if player.ai, do: " 🤖" %>
           </div>
           <div class="Player-hp"><%= player.hp %></div>
+          <div :if={@state.required_discards[player_num] != 0} class="Player-discards">
+            ⬇️ <%= @state.required_discards[player_num] %>
+          </div>
         </div>
       </header>
       <%= if @state.winning_player do %>
