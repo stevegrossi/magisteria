@@ -44,6 +44,16 @@ defmodule Magisteria.Game do
     start_turn(state)
   end
 
+  def play_all_cards(state) do
+    Enum.reduce_while(1..100, state, fn _i, state ->
+      if state.hands[state.current_player] == [] do
+        {:halt, state}
+      else
+        {:cont, play_card(state, 0)}
+      end
+    end)
+  end
+
   def play_card(state, index) do
     {card, remaining_hand} = List.pop_at(state.hands[state.current_player], index)
 

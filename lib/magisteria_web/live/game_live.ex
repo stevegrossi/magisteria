@@ -79,6 +79,13 @@ defmodule MagisteriaWeb.GameLive do
                 <%= @state.might %>
               </div>
             </div>
+            <button
+              :if={@state.hands[@state.current_player] != []}
+              class="ActionButton"
+              phx-click="play_all"
+            >
+              Play All
+            </button>
             <%= if @state.might > 0 do %>
               <button class="ActionButton ActionButton--might" phx-click="attack">Attack</button>
             <% end %>
@@ -159,6 +166,12 @@ defmodule MagisteriaWeb.GameLive do
   end
 
   @impl true
+  def handle_event("play_all", _params, socket) do
+    new_state = Game.play_all_cards(socket.assigns.state)
+
+    {:noreply, assign(socket, state: new_state)}
+  end
+
   def handle_event("play_card", %{"index" => index}, socket) do
     new_state = Game.play_card(socket.assigns.state, String.to_integer(index))
 
