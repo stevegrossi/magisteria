@@ -3,3 +3,293 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  background: #0F172A;
+  color: #F1F5F9;
+}
+
+[phx-click] { cursor: pointer; }
+
+.alert { position: absolute; }
+
+.Header {
+  padding: .5em;
+  height: 10vh;
+}
+
+.Player {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  font-size: 1.5em;
+  padding: .75em 2em;
+  font-family: 'Cinzel Decorative';
+  font-weight: bold;
+}
+.Player-hp {
+  color: #fff;
+  background-color: #22c55e;
+  text-shadow: 0 1px 1px rgba(0,0,0,.25);
+  box-shadow:
+    0 0 1px #fff,
+    0 0 3px #22c55e
+  ;
+  padding: .5em;
+  margin: 0 1em;
+  line-height: 1;
+  font-weight: bold;
+  border-radius: 100%;
+}
+.Player--1 {
+  left: 0;
+}
+.Player--2 {
+  right: 0;
+  flex-direction: row-reverse;
+}
+.Player--active {
+  border-bottom: 2px solid #0EA5E9;
+  text-shadow:
+    0 0 1px #fff,
+    0 0 4px #0EA5E9,
+    0 0 10px #0ff;
+}
+.Logo {
+  text-align: center;
+  font-weight: bold;
+  font-family: 'Cinzel Decorative';
+  font-size: 3em;
+  color: white;
+  margin: 0;
+  text-shadow:
+    0 0 1px #fff,
+    0 0 4px #0EA5E9,
+    0 0 10px #0ff;
+}
+.SpellBoard {
+  background-color: #334155;
+  background-image: url('/images/black-linen.png');
+  padding: .5em;
+  display: flex;
+  align-items: center;
+  height: 30vh;
+}
+.PlayBoard {
+  display: flex;
+  align-items: center;
+  height: 30vh;
+  background-color: #1e293b;
+}
+.Hand {
+  display: flex;
+  align-items: center;
+  height: 30vh;
+  background-image: url('/images/dark-wood.png');
+}
+.CardList {
+  list-style: none;
+  display: flex;
+  gap: .5em;
+  margin: 0 auto;
+}
+.CardList-right {
+  margin-left: 0;
+}
+.StackedCardList {
+  list-style: none;
+  position: relative;
+  margin: 0 auto;
+  width: 10em;
+  height: 12em;
+  padding: .5em;
+  background-color: rgba(0,0,0,.1);
+}
+.StackedCardList .Card {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.StackedCardList li:first-child .Card {
+  transform: rotate(-3deg);
+}
+.StackedCardList li:nth-child(2) .Card {
+  transform: rotate(3deg);
+}
+.StackedCardList li:nth-child(3) .Card {
+  transform: rotate(5deg);
+}
+.CardBack {
+  width: 10em;
+  height: 12em;
+  border-radius: .5em;
+  padding: .5em;
+  background-color: #0c4a6e;
+  border: 4px solid rgba(0,0,0,.25);
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  position: relative;
+}
+.CardBack::before {
+  content: 'M';
+  font-family: 'Cinzel Decorative';
+  color: rgba(0,0,0,.25);
+  font-size: 7em;
+  text-shadow:
+    0 1px 1px rgba(255,255,255,.1),
+    0 -1px 1px rgba(0,0,0,.1);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.CardCount {
+  color: white;
+  font-size: 6em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.Card {
+  color: black;
+  border: 4px solid rgba(0,0,0,.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  border-radius: .5em;
+  padding: .5em;
+  background-color: wheat;
+  width: 10em;
+  height: 12em;
+  position: relative;
+  transform: translate3d(0,0);
+  transition: transform;
+}
+.Card-name {
+  font-weight: bold;
+  font-size: 1.25em;
+  margin-bottom: 1em;
+}
+.Card-cost {
+  font-family: 'Cinzel Decorative';
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  right: -.25em;
+  border-radius: 100%;
+  font-size: 2em;
+  line-height: .25;
+}
+.Card-cost svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+.Card-costNumber {
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+.Card--earth { background-color: #86efac; }
+.Card--fire { background-color: #fca5a5; }
+.Card--shadow { background-color: #78716c; }
+.Card--water { background-color: #7dd3fc; }
+
+.Resources {
+  display: flex;
+  font-size: 4em;
+  flex-wrap: wrap;
+  width: 5em;
+  margin-right: .5em;
+}
+.Resources-resource {
+  position: relative;
+  text-align: center;
+  width: 10rem;
+  height: 12rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.Resources-title {
+  position: relative;
+  z-index: 1;
+  font-size: .5em;
+}
+.Resources-count {
+  position: relative;
+  font-size: 2em;
+  z-index: 1;
+}
+.Resources svg {
+  width: 3em;
+  height: 3em;
+  margin: 0 -.25em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+}
+.ActionButton {
+  font-size: 1.5rem;
+  flex-basis: 100%;
+  padding: .5em;
+  background: none;
+  position: relative;
+  z-index: 1;
+  font-weight: bold;
+  border-radius: .5em;
+  border: 1px solid #94a3b8;
+  color: #94a3b8;
+  box-shadow:
+    0 0 1px rgba(255,255,255,.1);
+  text-shadow: 0 0 1px rgba(255,255,255,.1);
+}
+.ActionButton--might {
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  box-shadow:
+    0 0 1px rgba(255,255,255,.1),
+    0 0 3px #ef4444
+  ;
+  text-shadow: 0 0 1px rgba(255,255,255,.1);
+}
+.Mana {
+  fill: #0EA5E9;
+  filter: drop-shadow(0px 1px 3px #0EA5E9);
+}
+.Might {
+  fill: #ef4444;
+  filter: drop-shadow(0px 1px 3px #ef4444);
+}
+.RequiredAction {
+  padding: 1em;
+}
+.Winner {
+  font-size: 3em;
+  padding: 6em 2em;
+  text-align: center;
+  font-family: 'Cinzel Decorative';
+}
