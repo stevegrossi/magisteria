@@ -6,6 +6,7 @@ defmodule MagisteriaWeb.GameLive do
   use MagisteriaWeb, :live_view
 
   alias Magisteria.Game
+  alias Magisteria.Card
 
   @impl true
   def mount(_params, _session, socket) do
@@ -45,9 +46,13 @@ defmodule MagisteriaWeb.GameLive do
       <% else %>
         <section class="SpellBoard">
           <ul class="CardList">
-            <%= for {card, index} <- Enum.with_index(@state.for_purchase) do %>
-              <li phx-click="purchase_card" phx-value-index={index}><%= render_card(card) %></li>
-            <% end %>
+            <li
+              :for={{card, index} <- Enum.with_index(@state.for_purchase)}
+              phx-click="purchase_card"
+              phx-value-index={index}
+            >
+              <.card card={card} obtainable?={card.cost <= @state.mana} />
+            </li>
             <li class="CardBack CardList-right">
               <span class="CardCount"><%= length(@state.for_purchase_deck) %></span>
             </li>
@@ -56,7 +61,7 @@ defmodule MagisteriaWeb.GameLive do
         <section class="PlayBoard">
           <ul class="CardList">
             <%= for card <- @state.cards_played do %>
-              <li><%= render_card(card) %></li>
+              <li><.card card={card} /></li>
             <% end %>
           </ul>
           <div class="Resources">
@@ -100,13 +105,13 @@ defmodule MagisteriaWeb.GameLive do
                 phx-click={if discard_required?(@state), do: "discard", else: "play_card"}
                 phx-value-index={index}
               >
-                <%= render_card(card) %>
+                <.card card={card} />
               </li>
             <% end %>
           </ul>
           <ul class="StackedCardList">
             <%= for card <- @state.discard_piles[@state.current_player] do %>
-              <li><%= render_card(card) %></li>
+              <li><.card card={card} /></li>
             <% end %>
           </ul>
           <div class="CardBack CardList-right">
@@ -120,23 +125,22 @@ defmodule MagisteriaWeb.GameLive do
     """
   end
 
-  defp render_card(assigns) do
+  attr :card, Card, required: true
+  attr :obtainable?, :boolean, default: false
+
+  defp card(assigns) do
     ~H"""
-    <div class={"Card Card--#{@element}"}>
-      <div class="Card-name"><%= @name %></div>
-      <%= if @cost do %>
-        <div class="Card-cost">
-          <%= resource_icon(:mana) %>
-          <span class="Card-costNumber"><%= @cost %></span>
-        </div>
-      <% end %>
-      <div class="Card-text"><%= card_text(@effects) %></div>
-      <%= if @affinity_effects != [] do %>
-        <div class="Card-affinity">
-          <strong>Affinity:</strong>
-          <%= card_text(@affinity_effects) %>
-        </div>
-      <% end %>
+    <div class={["Card Card--#{@card.element}", @obtainable? && "Card--obtainable"]}>
+      <div class="Card-name"><%= @card.name %></div>
+      <div :if={@card.cost} class="Card-cost">
+        <%= resource_icon(:mana) %>
+        <span class="Card-costNumber"><%= @card.cost %></span>
+      </div>
+      <div class="Card-text"><%= card_text(@card.effects) %></div>
+      <div :if={@card.affinity_effects != []} class="Card-affinity">
+        <strong>Affinity:</strong>
+        <%= card_text(@card.affinity_effects) %>
+      </div>
     </div>
     """
   end
