@@ -24,6 +24,10 @@ defmodule Magisteria.Game do
         1 => [],
         2 => []
       },
+      summons: %{
+        1 => [],
+        2 => []
+      },
       draw_piles: %{
         1 => starting_draw_pile(),
         2 => starting_draw_pile()
@@ -57,17 +61,19 @@ defmodule Magisteria.Game do
   def play_card(state, index) do
     {card, remaining_hand} = List.pop_at(state.hands[state.current_player], index)
 
-    card =
-      case card do
-        %{element: nil} -> card
-        %{element: _} -> Map.put(card, :affinity_applied, false)
-      end
-
     state
-    |> Map.update!(:cards_played, &(&1 ++ [card]))
+    |> place_card(card)
     |> put_in([:hands, state.current_player], remaining_hand)
     |> apply_card_effects(card)
     |> apply_affinities()
+  end
+
+  defp place_card(state, card) do
+    if is_nil(card.shield) do
+      Map.update!(state, :cards_played, &(&1 ++ [card]))
+    else
+      update_in(state, [:summons, state.current_player], &(&1 ++ [card]))
+    end
   end
 
   def discard(state, index) do
@@ -100,8 +106,22 @@ defmodule Magisteria.Game do
     |> check_for_winner()
   end
 
+  def attack_summon(state, index) do
+    {summon, remaining_summons} = List.pop_at(state.summons[other_player(state)], index)
+
+    if state.might >= summon.shield do
+      state
+      |> Map.update!(:might, &(&1 - summon.shield))
+      |> update_in([:discard_piles, other_player(state)], &(&1 ++ [summon]))
+      |> put_in([:summons, other_player(state)], remaining_summons)
+    else
+      state
+    end
+  end
+
   def end_turn(state) do
     state
+    |> reset_summon_affinities()
     |> discard_cards_played()
     |> Map.merge(%{
       current_player: other_player(state),
@@ -118,6 +138,12 @@ defmodule Magisteria.Game do
     |> List.duplicate(4)
     |> List.flatten()
     |> Enum.shuffle()
+  end
+
+  defp reset_summon_affinities(state) do
+    update_in(state, [:summons, state.current_player], fn summons ->
+      Enum.map(summons, &Card.reset_affinity/1)
+    end)
   end
 
   defp refill_for_purchase(state) do
@@ -161,9 +187,11 @@ defmodule Magisteria.Game do
     end)
   end
 
+  # Should we keep track of affinity_counts at turn start and when each card is played instead?
   defp apply_affinities(state) do
     unlocked_affinities =
       state.cards_played
+      |> Kernel.++(state.summons[state.current_player])
       |> Enum.frequencies_by(& &1.element)
       |> Enum.filter(fn {_element, frequency} -> frequency > 1 end)
       |> Enum.map(&elem(&1, 0))
@@ -173,23 +201,46 @@ defmodule Magisteria.Game do
         state
 
       _ ->
-        state.cards_played
+        state =
+          state.cards_played
+          |> Enum.with_index()
+          |> Enum.filter(fn {card, _index} ->
+            not is_nil(card.element) and not card.affinity_applied and
+              card.element in unlocked_affinities
+          end)
+          |> Enum.reduce(state, fn {_card, index}, state ->
+            apply_affinity_to_cards_played(state, index)
+          end)
+
+        state.summons[state.current_player]
         |> Enum.with_index()
         |> Enum.filter(fn {card, _index} ->
           not is_nil(card.element) and not card.affinity_applied and
             card.element in unlocked_affinities
         end)
-        |> Enum.reduce(state, fn {_card, index}, state -> apply_affinity(state, index) end)
+        |> Enum.reduce(state, fn {_card, index}, state ->
+          apply_affinity_to_summon(state, index)
+        end)
     end
   end
 
-  defp apply_affinity(state, index) do
+  defp apply_affinity_to_cards_played(state, index) do
     card = Enum.at(state.cards_played, index)
 
     state
     |> apply_card_effects(card, :affinity_effects)
     |> Map.update!(:cards_played, fn cards ->
       List.update_at(cards, index, &%{&1 | affinity_applied: true})
+    end)
+  end
+
+  defp apply_affinity_to_summon(state, index) do
+    card = Enum.at(state.summons[state.current_player], index)
+
+    state
+    |> apply_card_effects(card, :affinity_effects)
+    |> update_in([:summons, state.current_player], fn summons ->
+      List.update_at(summons, index, &%{&1 | affinity_applied: true})
     end)
   end
 
@@ -225,8 +276,8 @@ defmodule Magisteria.Game do
     update_in(state, [:required_discards, player], &(&1 + count))
   end
 
-  defp other_player(%{current_player: 1}), do: 2
-  defp other_player(%{current_player: 2}), do: 1
+  def other_player(%{current_player: 1}), do: 2
+  def other_player(%{current_player: 2}), do: 1
 
   defp check_for_winner(state) do
     defeated_player = for {num, player} <- state.players, player.hp <= 0, do: num
@@ -240,12 +291,23 @@ defmodule Magisteria.Game do
 
   defp discard_cards_played(state) do
     state
-    |> update_in([:discard_piles, state.current_player], &(&1 ++ state.cards_played))
+    |> update_in([:discard_piles, state.current_player], fn discard_pile ->
+      discard_pile ++ Enum.map(state.cards_played, &Card.reset_affinity/1)
+    end)
     |> Map.put(:cards_played, [])
   end
 
   defp start_turn(state) do
     state
     |> draw_cards(5)
+    |> apply_summon_effects()
+  end
+
+  defp apply_summon_effects(state) do
+    Enum.reduce(state.summons[state.current_player], state, fn card, state ->
+      state
+      |> apply_card_effects(card)
+      |> apply_affinities()
+    end)
   end
 end

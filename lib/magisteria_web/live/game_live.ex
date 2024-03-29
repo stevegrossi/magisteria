@@ -61,53 +61,71 @@ defmodule MagisteriaWeb.GameLive do
               <span class="CardCount"><%= length(@state.for_purchase_deck) %></span>
             </li>
           </ul>
+          <div class="flex flex-col">
+            <div class="Resources">
+              <div class="Resources-resource">
+                <div class="Resources-title">Mana</div>
+                <%= resource_icon(:mana) %>
+                <div class="Resources-count">
+                  <%= @state.mana %>
+                </div>
+              </div>
+              <div class="Resources-resource">
+                <div class="Resources-title">Might</div>
+                <%= resource_icon(:might) %>
+                <div class="Resources-count">
+                  <%= @state.might %>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-stretch">
+              <button
+                :if={not discard_required?(@state) and @state.hands[@state.current_player] != []}
+                class="ActionButton"
+                phx-click="play_all"
+              >
+                Play All
+              </button>
+              <button
+                :if={@state.might > 0}
+                class="ActionButton ActionButton--might"
+                phx-click="attack"
+              >
+                Attack
+              </button>
+              <button :if={can_end_turn?(@state)} class="ActionButton" phx-click="end_turn">
+                End Turn
+              </button>
+            </div>
+          </div>
         </section>
         <section class="PlayBoard">
+          <ul class="CardList mr-auto">
+            <li :for={card <- @state.summons[@state.current_player]}><.card card={card} /></li>
+          </ul>
           <ul class="CardList">
             <li :for={card <- @state.cards_played}><.card card={card} /></li>
           </ul>
-          <div class="Resources">
-            <div class="Resources-resource">
-              <div class="Resources-title">Mana</div>
-              <%= resource_icon(:mana) %>
-              <div class="Resources-count">
-                <%= @state.mana %>
-              </div>
-            </div>
-            <div class="Resources-resource">
-              <div class="Resources-title">Might</div>
-              <%= resource_icon(:might) %>
-              <div class="Resources-count">
-                <%= @state.might %>
-              </div>
-            </div>
-            <button
-              :if={not discard_required?(@state) and @state.hands[@state.current_player] != []}
-              class="ActionButton"
-              phx-click="play_all"
+          <ul class="CardList ml-auto">
+            <li
+              :for={{card, index} <- Enum.with_index(@state.summons[Game.other_player(@state)])}
+              phx-click={if @state.might >= card.shield, do: "attack_summon"}
+              phx-value-index={index}
             >
-              Play All
-            </button>
-            <%= if @state.might > 0 do %>
-              <button class="ActionButton ActionButton--might" phx-click="attack">Attack</button>
-            <% end %>
-            <%= if can_end_turn?(@state) do %>
-              <button class="ActionButton" phx-click="end_turn">End Turn</button>
-            <% end %>
-          </div>
+              <.card card={card} attackable?={@state.might >= card.shield} />
+            </li>
+          </ul>
         </section>
         <section class="Hand">
-          <%= if discard_required?(@state) do %>
-            <section class="RequiredAction">
-              <h2>
-                Discard <%= pluralize(
-                  "1 card",
-                  "%{count} cards",
-                  @state.required_discards[@state.current_player]
-                ) %>:
-              </h2>
-            </section>
-          <% end %>
+          <section :if={discard_required?(@state)} class="RequiredAction">
+            <h2>
+              Discard <%= pluralize(
+                "1 card",
+                "%{count} cards",
+                @state.required_discards[@state.current_player]
+              ) %>:
+            </h2>
+          </section>
           <ul class="CardList">
             <li
               :for={{card, index} <- Enum.with_index(@state.hands[@state.current_player])}
@@ -133,10 +151,15 @@ defmodule MagisteriaWeb.GameLive do
 
   attr :card, Card, required: true
   attr :obtainable?, :boolean, default: false
+  attr :attackable?, :boolean, default: false
 
   defp card(assigns) do
     ~H"""
-    <div class={["Card Card--#{@card.element}", @obtainable? && "Card--obtainable"]}>
+    <div class={[
+      "Card Card--#{@card.element}",
+      @obtainable? && "Card--obtainable",
+      @attackable? && "Card--attackable"
+    ]}>
       <div class="Card-name"><%= @card.name %></div>
       <div :if={@card.cost} class="Card-cost">
         <%= resource_icon(:mana) %>
@@ -146,6 +169,10 @@ defmodule MagisteriaWeb.GameLive do
       <div :if={@card.affinity_effects != []} class="Card-affinity">
         <strong>Affinity:</strong>
         <%= card_text(@card.affinity_effects) %>
+        <%= if @card.affinity_applied, do: "✅" %>
+      </div>
+      <div :if={@card.shield} class="Card-shield">
+        🛡️ <span class="Card-shieldNumber"><%= @card.shield %></span>
       </div>
     </div>
     """
@@ -192,6 +219,11 @@ defmodule MagisteriaWeb.GameLive do
   def handle_event("attack", _params, socket) do
     new_state = Game.attack(socket.assigns.state)
 
+    {:noreply, assign(socket, state: new_state)}
+  end
+
+  def handle_event("attack_summon", %{"index" => index}, socket) do
+    new_state = Game.attack_summon(socket.assigns.state, String.to_integer(index))
     {:noreply, assign(socket, state: new_state)}
   end
 

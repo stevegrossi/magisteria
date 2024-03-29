@@ -1,18 +1,15 @@
 # Magisteria
 
-To start your Phoenix server:
+A deckbuilding card game in the vein of Star Realms and Ascension. Combine spells, summons, and synergies from four schools of magic to defeat your opponent in a sorceror's duel!
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Future Ideas
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+- Guardian summons which protect the caster
+- More schools of magic?
+- Ability effects: casting for 0 mana, putting cast spells directly into play instead of the discard pile
+- I like Ascension's mechanic of defeating cards in the market row for bonuses
+- Event cards that affect both players when they appear in the market row
+- The ability to permanently remove cards from the game
+- buffing summons (maybe a light school)
+- bonuses against summons
+- synergizing with multiple other schools
