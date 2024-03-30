@@ -4,6 +4,7 @@ A deckbuilding card game in the vein of Star Realms and Ascension. Combine spell
 
 ## Future Ideas
 
+- Discard bonuses
 - Guardian summons which protect the caster
 - More schools of magic?
 - Ability effects: casting for 0 mana, putting cast spells directly into play instead of the discard pile
@@ -13,3 +14,4 @@ A deckbuilding card game in the vein of Star Realms and Ascension. Combine spell
 - buffing summons (maybe a light school)
 - bonuses against summons
 - synergizing with multiple other schools
+- summon abilities that cost mana to play (e.g. let you convert mana into might)

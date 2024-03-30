@@ -8,7 +8,7 @@ defmodule Magisteria.Card do
             element: nil,
             shield: nil
 
-  def all() do
+  def drawable() do
     [
       new(:amplify),
       new(:poison_bolt),
@@ -27,6 +27,12 @@ defmodule Magisteria.Card do
       new(:vines),
       new(:fire_imp)
     ]
+  end
+
+  def all() do
+    starting_deck()
+    |> Enum.uniq()
+    |> Kernel.++(drawable())
   end
 
   def starting_deck() do

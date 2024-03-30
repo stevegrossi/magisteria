@@ -19,6 +19,7 @@ defmodule MagisteriaWeb.Router do
 
     get "/", PageController, :home
     live "/play", GameLive
+    live "/cards", CardsLive
   end
 
   # Other scopes may use custom stacks.
