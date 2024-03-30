@@ -8,31 +8,45 @@ defmodule Magisteria.Card do
             element: nil,
             shield: nil
 
-  def drawable() do
+  def all() do
     [
+      # Neutral
+      new(:concentrate),
+      new(:arcane_bolt),
       new(:amplify),
-      new(:poison_bolt),
-      new(:heal),
-      new(:regrowth),
+      # Fire
       new(:flamestrike),
       new(:meteor),
-      new(:shadowbolt),
-      new(:life_drain),
-      new(:nullify),
+      new(:fire_blast),
+      new(:fire_imp),
+      new(:eruption),
+      new(:flame_golem),
+      # Water
       new(:water_bolt),
       new(:mana_drain),
       new(:evocate),
-      new(:skeleton),
       new(:frost_giant),
+      new(:ice_palace),
+      new(:blizzard),
+      # Shadow
+      new(:shadowbolt),
+      new(:life_drain),
+      new(:nullify),
+      new(:skeleton),
+      new(:ghostly_assassin),
+      new(:bone_golem),
+      # Earth
+      new(:poison_bolt),
+      new(:heal),
+      new(:regrowth),
       new(:vines),
-      new(:fire_imp)
+      new(:treant),
+      new(:monsoon)
     ]
   end
 
-  def all() do
-    starting_deck()
-    |> Enum.uniq()
-    |> Kernel.++(drawable())
+  def drawable() do
+    Enum.filter(all(), &(not is_nil(&1.cost)))
   end
 
   def starting_deck() do
@@ -133,6 +147,28 @@ defmodule Magisteria.Card do
     })
   end
 
+  def new(:eruption) do
+    new(%{
+      name: "Eruption",
+      effects: [gain_might: 5],
+      affinity_effects: [draw_cards: 1],
+      cost: 6,
+      element: :fire,
+      shield: nil
+    })
+  end
+
+  def new(:flame_golem) do
+    new(%{
+      name: "Fire Golem",
+      effects: [gain_might: 3, gain_mana: 3],
+      affinity_effects: [gain_might: 3],
+      cost: 7,
+      element: :fire,
+      shield: 5
+    })
+  end
+
   def new(:shadowbolt) do
     new(%{
       name: "Shadowbolt",
@@ -188,6 +224,17 @@ defmodule Magisteria.Card do
     })
   end
 
+  def new(:fire_blast) do
+    new(%{
+      name: "Fire Blast",
+      effects: [gain_might: 4],
+      affinity_effects: [force_discard: 1],
+      cost: 4,
+      element: :fire,
+      shield: nil
+    })
+  end
+
   def new(:evocate) do
     new(%{
       name: "Evocate",
@@ -210,6 +257,28 @@ defmodule Magisteria.Card do
     })
   end
 
+  def new(:bone_golem) do
+    new(%{
+      name: "Bone Golem",
+      effects: [gain_might: 6, gain_hp: 2],
+      affinity_effects: [gain_hp: 2],
+      cost: 7,
+      element: :shadow,
+      shield: 6
+    })
+  end
+
+  def new(:ghostly_assassin) do
+    new(%{
+      name: "Ghostly Assassin",
+      effects: [gain_might: 7],
+      affinity_effects: [gain_might: 2],
+      cost: 6,
+      element: :shadow,
+      shield: nil
+    })
+  end
+
   def new(:frost_giant) do
     new(%{
       name: "Frost Giant",
@@ -221,6 +290,28 @@ defmodule Magisteria.Card do
     })
   end
 
+  def new(:ice_palace) do
+    new(%{
+      name: "Ice Palace",
+      effects: [gain_might: 3, gain_mana: 3],
+      affinity_effects: [draw_cards: 1],
+      cost: 7,
+      element: :water,
+      shield: 6
+    })
+  end
+
+  def new(:blizzard) do
+    new(%{
+      name: "Blizzard",
+      effects: [gain_might: 7],
+      affinity_effects: [gain_mana: 3],
+      cost: 7,
+      element: :water,
+      shield: nil
+    })
+  end
+
   def new(:vines) do
     new(%{
       name: "Vines",
@@ -229,6 +320,28 @@ defmodule Magisteria.Card do
       cost: 2,
       element: :earth,
       shield: 3
+    })
+  end
+
+  def new(:treant) do
+    new(%{
+      name: "Treant",
+      effects: [gain_might: 5],
+      affinity_effects: [gain_might: 2, gain_hp: 2],
+      cost: 7,
+      element: :earth,
+      shield: 7
+    })
+  end
+
+  def new(:monsoon) do
+    new(%{
+      name: "Monsoon",
+      effects: [gain_might: 3, gain_hp: 3, gain_mana: 3],
+      affinity_effects: [draw_cards: 1],
+      cost: 5,
+      element: :earth,
+      shield: nil
     })
   end
 

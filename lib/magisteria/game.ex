@@ -135,7 +135,7 @@ defmodule Magisteria.Game do
 
   defp for_purchase_deck() do
     Card.drawable()
-    |> List.duplicate(4)
+    |> List.duplicate(2)
     |> List.flatten()
     |> Enum.shuffle()
   end
