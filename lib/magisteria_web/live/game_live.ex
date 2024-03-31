@@ -229,8 +229,23 @@ defmodule MagisteriaWeb.GameLive do
 
   def handle_event("end_turn", _params, socket) do
     new_state = Game.end_turn(socket.assigns.state)
+    maybe_schedule_ai_action(new_state)
 
     {:noreply, assign(socket, state: new_state)}
+  end
+
+  @impl true
+  def handle_info(:take_ai_action, socket) do
+    new_state = Magisteria.Game.AI.take_action(socket.assigns.state)
+    maybe_schedule_ai_action(new_state)
+
+    {:noreply, assign(socket, state: new_state)}
+  end
+
+  defp maybe_schedule_ai_action(state) do
+    if state.players[state.current_player].ai do
+      Process.send_after(self(), :take_ai_action, 1_000)
+    end
   end
 
   defp discard_required?(state) do

@@ -13,7 +13,7 @@ defmodule Magisteria.Game do
       current_player: 1,
       players: %{
         1 => %{hp: @starting_hp, ai: false},
-        2 => %{hp: @starting_hp, ai: false}
+        2 => %{hp: @starting_hp, ai: true}
       },
       mana: 0,
       might: 0,
