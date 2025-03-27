@@ -1,7 +1,5 @@
 defmodule MagisteriaWeb.GameLive do
-  @moduledoc """
-  The game!
-  """
+  @moduledoc "The game!"
 
   use MagisteriaWeb, :live_view
 
@@ -35,46 +33,46 @@ defmodule MagisteriaWeb.GameLive do
           }
         >
           <div class="Player-name">
-            Player <%= player_num %> <%= if player.ai, do: " 🤖" %>
+            Player {player_num} {if player.ai, do: " 🤖"}
           </div>
-          <div class="Player-hp"><%= player.hp %></div>
+          <div class="Player-hp">{player.hp}</div>
           <div :if={@state.required_discards[player_num] != 0} class="Player-discards">
-            ⬇️ <%= @state.required_discards[player_num] %>
+            ⬇️ {@state.required_discards[player_num]}
           </div>
         </div>
       </header>
       <%= if @state.winning_player do %>
         <div class="Winner">
-          Player <%= @state.winning_player %> wins!
+          Player {@state.winning_player} wins!
         </div>
       <% else %>
         <section class="SpellBoard">
           <ul class="CardList">
             <li
-              :for={{card, index} <- Enum.with_index(@state.for_purchase)}
+              :for={{card, index} <- Enum.with_index(@state.market)}
               phx-click="purchase_card"
               phx-value-index={index}
             >
               <.card card={card} obtainable?={card.cost <= @state.mana} />
             </li>
             <li class="CardBack CardList-right">
-              <span class="CardCount"><%= length(@state.for_purchase_deck) %></span>
+              <span class="CardCount">{length(@state.market_deck)}</span>
             </li>
           </ul>
           <div class="flex flex-col">
             <div class="Resources">
               <div class="Resources-resource">
                 <div class="Resources-title">Mana</div>
-                <%= resource_icon(:mana) %>
+                {resource_icon(:mana)}
                 <div class="Resources-count">
-                  <%= @state.mana %>
+                  {@state.mana}
                 </div>
               </div>
               <div class="Resources-resource">
                 <div class="Resources-title">Might</div>
-                <%= resource_icon(:might) %>
+                {resource_icon(:might)}
                 <div class="Resources-count">
-                  <%= @state.might %>
+                  {@state.might}
                 </div>
               </div>
             </div>
@@ -119,11 +117,11 @@ defmodule MagisteriaWeb.GameLive do
         <section class="Hand">
           <section :if={discard_required?(@state)} class="RequiredAction">
             <h2>
-              Discard <%= pluralize(
+              Discard {pluralize(
                 "1 card",
                 "%{count} cards",
                 @state.required_discards[@state.current_player]
-              ) %>:
+              )}:
             </h2>
           </section>
           <ul class="CardList">
@@ -139,7 +137,7 @@ defmodule MagisteriaWeb.GameLive do
             <li :for={card <- @state.discard_piles[@state.current_player]}><.card card={card} /></li>
           </ul>
           <div class="CardBack CardList-right">
-            <span class="CardCount"><%= length(@state.draw_piles[@state.current_player]) %></span>
+            <span class="CardCount">{length(@state.draw_piles[@state.current_player])}</span>
           </div>
         </section>
       <% end %>
@@ -160,19 +158,19 @@ defmodule MagisteriaWeb.GameLive do
       @obtainable? && "Card--obtainable",
       @attackable? && "Card--attackable"
     ]}>
-      <div class="Card-name"><%= @card.name %></div>
+      <div class="Card-name">{@card.name}</div>
       <div :if={@card.cost} class="Card-cost">
-        <%= resource_icon(:mana) %>
-        <span class="Card-costNumber"><%= @card.cost %></span>
+        {resource_icon(:mana)}
+        <span class="Card-costNumber">{@card.cost}</span>
       </div>
-      <div class="Card-text"><%= card_text(@card.effects) %></div>
+      <div class="Card-text">{card_text(@card.effects)}</div>
       <div :if={@card.affinity_effects != []} class="Card-affinity">
         <strong>Affinity:</strong>
-        <%= card_text(@card.affinity_effects) %>
-        <%= if @card.affinity_applied, do: "✅" %>
+        {card_text(@card.affinity_effects)}
+        {if @card.affinity_applied, do: "✅"}
       </div>
       <div :if={@card.shield} class="Card-shield">
-        🛡️ <span class="Card-shieldNumber"><%= @card.shield %></span>
+        🛡️ <span class="Card-shieldNumber">{@card.shield}</span>
       </div>
     </div>
     """

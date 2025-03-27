@@ -43,7 +43,7 @@ defmodule MagisteriaWeb do
         layouts: [html: MagisteriaWeb.Layouts]
 
       import Plug.Conn
-      import MagisteriaWeb.Gettext
+      use Gettext, backend: MagisteriaWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -85,7 +85,7 @@ defmodule MagisteriaWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import MagisteriaWeb.CoreComponents
-      import MagisteriaWeb.Gettext
+      use Gettext, backend: MagisteriaWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

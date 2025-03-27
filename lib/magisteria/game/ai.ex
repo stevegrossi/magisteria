@@ -24,7 +24,7 @@ defmodule Magisteria.Game.AI do
   end
 
   defp can_purchase_spells?(state) do
-    Enum.any?(state.for_purchase, &(&1.cost <= state.mana))
+    Enum.any?(state.market, &(&1.cost <= state.mana))
   end
 
   defp can_attack?(state) do
@@ -37,12 +37,12 @@ defmodule Magisteria.Game.AI do
 
   defp purchase_biggest_spell(state) do
     highest_cost =
-      state.for_purchase
+      state.market
       |> Enum.map(& &1.cost)
       |> Enum.filter(&(&1 <= state.mana))
       |> Enum.max()
 
-    index = Enum.find_index(state.for_purchase, &(&1.cost == highest_cost))
+    index = Enum.find_index(state.market, &(&1.cost == highest_cost))
 
     Game.purchase_card(state, index)
   end

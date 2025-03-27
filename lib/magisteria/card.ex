@@ -161,11 +161,11 @@ defmodule Magisteria.Card do
   def new(:flame_golem) do
     new(%{
       name: "Fire Golem",
-      effects: [gain_might: 3, gain_mana: 3],
+      effects: [gain_might: 3, gain_mana: 2],
       affinity_effects: [gain_might: 3],
-      cost: 7,
+      cost: 6,
       element: :fire,
-      shield: 5
+      shield: 4
     })
   end
 
@@ -260,20 +260,20 @@ defmodule Magisteria.Card do
   def new(:bone_golem) do
     new(%{
       name: "Bone Golem",
-      effects: [gain_might: 6, gain_hp: 2],
+      effects: [gain_might: 5, gain_hp: 2],
       affinity_effects: [gain_hp: 2],
-      cost: 7,
+      cost: 6,
       element: :shadow,
-      shield: 6
+      shield: 5
     })
   end
 
   def new(:ghostly_assassin) do
     new(%{
       name: "Ghostly Assassin",
-      effects: [gain_might: 7],
+      effects: [gain_might: 6],
       affinity_effects: [gain_might: 2],
-      cost: 6,
+      cost: 5,
       element: :shadow,
       shield: nil
     })
@@ -295,9 +295,9 @@ defmodule Magisteria.Card do
       name: "Ice Palace",
       effects: [gain_might: 3, gain_mana: 3],
       affinity_effects: [draw_cards: 1],
-      cost: 7,
+      cost: 6,
       element: :water,
-      shield: 6
+      shield: 5
     })
   end
 
@@ -306,7 +306,7 @@ defmodule Magisteria.Card do
       name: "Blizzard",
       effects: [gain_might: 7],
       affinity_effects: [gain_mana: 3],
-      cost: 7,
+      cost: 6,
       element: :water,
       shield: nil
     })
@@ -326,18 +326,18 @@ defmodule Magisteria.Card do
   def new(:treant) do
     new(%{
       name: "Treant",
-      effects: [gain_might: 5],
+      effects: [gain_might: 3],
       affinity_effects: [gain_might: 2, gain_hp: 2],
-      cost: 7,
+      cost: 6,
       element: :earth,
-      shield: 7
+      shield: 6
     })
   end
 
   def new(:monsoon) do
     new(%{
       name: "Monsoon",
-      effects: [gain_might: 3, gain_hp: 3, gain_mana: 3],
+      effects: [gain_might: 3, gain_hp: 2, gain_mana: 2],
       affinity_effects: [draw_cards: 1],
       cost: 5,
       element: :earth,

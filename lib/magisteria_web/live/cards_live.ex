@@ -16,7 +16,7 @@ defmodule MagisteriaWeb.CardsLive do
     ~H"""
     <div class="p-4">
       <div :for={{element, cards} <- @cards_by_element}>
-        <h2 class="text-xl my-4 font-['Cinzel_Decorative']"><%= element || "None" %></h2>
+        <h2 class="text-xl my-4 font-['Cinzel_Decorative']">{element || "None"}</h2>
         <ul class="flex flex-wrap gap-2">
           <li :for={card <- cards}>
             <.card card={card} />
@@ -38,19 +38,19 @@ defmodule MagisteriaWeb.CardsLive do
       @obtainable? && "Card--obtainable",
       @attackable? && "Card--attackable"
     ]}>
-      <div class="Card-name"><%= @card.name %></div>
+      <div class="Card-name">{@card.name}</div>
       <div :if={@card.cost} class="Card-cost">
-        <%= resource_icon(:mana) %>
-        <span class="Card-costNumber"><%= @card.cost %></span>
+        {resource_icon(:mana)}
+        <span class="Card-costNumber">{@card.cost}</span>
       </div>
-      <div class="Card-text"><%= card_text(@card.effects) %></div>
+      <div class="Card-text">{card_text(@card.effects)}</div>
       <div :if={@card.affinity_effects != []} class="Card-affinity">
         <strong>Affinity:</strong>
-        <%= card_text(@card.affinity_effects) %>
-        <%= if @card.affinity_applied, do: "✅" %>
+        {card_text(@card.affinity_effects)}
+        {if @card.affinity_applied, do: "✅"}
       </div>
       <div :if={@card.shield} class="Card-shield">
-        🛡️ <span class="Card-shieldNumber"><%= @card.shield %></span>
+        🛡️ <span class="Card-shieldNumber">{@card.shield}</span>
       </div>
     </div>
     """

@@ -17,8 +17,8 @@ defmodule Magisteria.Game do
       },
       mana: 0,
       might: 0,
-      for_purchase: [],
-      for_purchase_deck: for_purchase_deck(),
+      market: [],
+      market_deck: market_deck(),
       cards_played: [],
       hands: %{
         1 => [],
@@ -41,7 +41,7 @@ defmodule Magisteria.Game do
         2 => 0
       }
     }
-    |> populate_for_purchase()
+    |> populate_market()
   end
 
   def start(state) do
@@ -86,14 +86,14 @@ defmodule Magisteria.Game do
   end
 
   def purchase_card(state, index) do
-    {card, remaining_for_purchase} = List.pop_at(state.for_purchase, index)
+    {card, remaining_market} = List.pop_at(state.market, index)
 
     if card.cost <= state.mana do
       state
       |> Map.update!(:mana, &(&1 - card.cost))
       |> update_in([:discard_piles, state.current_player], &(&1 ++ [card]))
-      |> Map.put(:for_purchase, remaining_for_purchase)
-      |> refill_for_purchase()
+      |> Map.put(:market, remaining_market)
+      |> refill_market()
     else
       state
     end
@@ -133,10 +133,14 @@ defmodule Magisteria.Game do
 
   # PRIVATE
 
-  defp for_purchase_deck() do
+  defp market_deck() do
+    rare_cards = Enum.filter(Card.drawable(), &(&1.cost > 4))
+
     Card.drawable()
+    |> Enum.filter(&(&1.cost <= 4))
     |> List.duplicate(2)
     |> List.flatten()
+    |> Kernel.++(rare_cards)
     |> Enum.shuffle()
   end
 
@@ -146,24 +150,24 @@ defmodule Magisteria.Game do
     end)
   end
 
-  defp refill_for_purchase(state) do
-    {card, for_purchase_deck} = List.pop_at(state.for_purchase_deck, 0)
+  defp refill_market(state) do
+    {card, market_deck} = List.pop_at(state.market_deck, 0)
 
     state
-    |> Map.update!(:for_purchase, &(&1 ++ [card]))
-    |> Map.put(:for_purchase_deck, for_purchase_deck)
+    |> Map.update!(:market, &(&1 ++ [card]))
+    |> Map.put(:market_deck, market_deck)
   end
 
   defp starting_draw_pile() do
     Enum.shuffle(Card.starting_deck())
   end
 
-  defp populate_for_purchase(state) do
-    {for_purchase, for_purchase_deck} = pop_first(state.for_purchase_deck, 5)
+  defp populate_market(state) do
+    {market, market_deck} = pop_first(state.market_deck, 5)
 
     state
-    |> Map.put(:for_purchase, for_purchase)
-    |> Map.put(:for_purchase_deck, for_purchase_deck)
+    |> Map.put(:market, market)
+    |> Map.put(:market_deck, market_deck)
   end
 
   defp pop_first(list, count) do
