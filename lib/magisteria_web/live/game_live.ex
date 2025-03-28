@@ -76,7 +76,7 @@ defmodule MagisteriaWeb.GameLive do
                 </div>
               </div>
             </div>
-            <div class="flex items-stretch">
+            <div class="flex items-stretch" :if={not @state.players[@state.current_player].ai}>
               <button
                 :if={not discard_required?(@state) and @state.hands[@state.current_player] != []}
                 class="ActionButton"

@@ -32,7 +32,18 @@ defmodule Magisteria.Game.AI do
   end
 
   defp discard_cards(state) do
-    Game.discard(state, 0)
+    lowest_cost =
+      state.hands[state.current_player]
+      |> Enum.map(& &1.cost)
+      |> Enum.min()
+
+    index =
+      Enum.find_index(
+        state.hands[state.current_player],
+        &(is_nil(&1.cost) or &1.cost == lowest_cost)
+      )
+
+    Game.discard(state, index)
   end
 
   defp purchase_biggest_spell(state) do

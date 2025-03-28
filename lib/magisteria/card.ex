@@ -227,9 +227,9 @@ defmodule Magisteria.Card do
   def new(:fire_blast) do
     new(%{
       name: "Fire Blast",
-      effects: [gain_might: 4],
+      effects: [gain_might: 3],
       affinity_effects: [force_discard: 1],
-      cost: 4,
+      cost: 3,
       element: :fire,
       shield: nil
     })

@@ -7,7 +7,11 @@ defmodule MagisteriaWeb.CardsLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    cards = Enum.group_by(Card.all(), & &1.element)
+    cards =
+      Card.all()
+      |> Enum.sort_by(&(&1.cost || 0))
+      |> Enum.group_by(& &1.element)
+
     {:ok, assign(socket, cards_by_element: cards)}
   end
 
