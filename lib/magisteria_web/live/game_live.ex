@@ -124,9 +124,10 @@ defmodule MagisteriaWeb.GameLive do
               )}:
             </h2>
           </section>
-          <ul class="CardList">
+          <ul class="CardList grow justify-center -mt-8">
             <li
               :for={{card, index} <- Enum.with_index(@state.hands[@state.current_player])}
+              style={"transform: rotate(#{(-((length(@state.hands[@state.current_player]) - 1) / 2) + index) * 3}deg) translateY(#{abs(((length(@state.hands[@state.current_player]) - 1) / 2) - index)}rem); margin-left: -1rem;"}
               phx-click={if discard_required?(@state), do: "discard", else: "play_card"}
               phx-value-index={index}
             >
@@ -148,6 +149,7 @@ defmodule MagisteriaWeb.GameLive do
   end
 
   attr :card, Card, required: true
+  attr :class, :string, default: nil
   attr :obtainable?, :boolean, default: false
   attr :attackable?, :boolean, default: false
 
@@ -156,7 +158,8 @@ defmodule MagisteriaWeb.GameLive do
     <div class={[
       "Card Card--#{@card.element}",
       @obtainable? && "Card--obtainable",
-      @attackable? && "Card--attackable"
+      @attackable? && "Card--attackable",
+      @class
     ]}>
       <div class="Card-name">{@card.name}</div>
       <div :if={@card.cost} class="Card-cost">
