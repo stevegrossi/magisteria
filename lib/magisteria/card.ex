@@ -4,6 +4,7 @@ defmodule Magisteria.Card do
             effects: [],
             affinity_effects: [],
             affinity_applied: false,
+            banish_effects: [],
             cost: nil,
             element: nil,
             shield: nil
@@ -14,6 +15,7 @@ defmodule Magisteria.Card do
       new(:concentrate),
       new(:arcane_bolt),
       new(:amplify),
+      new(:mana_gem),
       # Fire
       new(:flamestrike),
       new(:meteor),
@@ -32,7 +34,7 @@ defmodule Magisteria.Card do
       new(:shadowbolt),
       new(:life_drain),
       new(:nullify),
-      new(:skeleton),
+      new(:plague_zombie),
       new(:ghostly_assassin),
       new(:bone_golem),
       # Earth
@@ -92,6 +94,18 @@ defmodule Magisteria.Card do
     })
   end
 
+  def new(:mana_gem) do
+    new(%{
+      name: "Mana Gem",
+      effects: [gain_mana: 2],
+      affinity_effects: [],
+      banish_effects: [gain_might: 2],
+      cost: 2,
+      element: nil,
+      shield: nil
+    })
+  end
+
   def new(:poison_bolt) do
     new(%{
       name: "Poison Bolt",
@@ -119,6 +133,7 @@ defmodule Magisteria.Card do
       name: "Regrowth",
       effects: [draw_cards: 1, self_discard: 1],
       affinity_effects: [gain_hp: 2],
+      banish_effects: [draw_cards: 1],
       cost: 2,
       element: :earth,
       shield: nil
@@ -218,6 +233,7 @@ defmodule Magisteria.Card do
       name: "Mana Drain",
       effects: [gain_might: 2, gain_mana: 2],
       affinity_effects: [draw_cards: 1],
+      banish_effects: [force_discard: 1],
       cost: 3,
       element: :water,
       shield: nil
@@ -246,12 +262,13 @@ defmodule Magisteria.Card do
     })
   end
 
-  def new(:skeleton) do
+  def new(:plague_zombie) do
     new(%{
-      name: "Skeleton",
+      name: "Plague Zombie",
       effects: [gain_might: 2],
       affinity_effects: [gain_might: 2],
-      cost: 2,
+      banish_effects: [gain_might: 2],
+      cost: 3,
       element: :shadow,
       shield: 3
     })
@@ -348,11 +365,12 @@ defmodule Magisteria.Card do
   def new(:fire_imp) do
     new(%{
       name: "Fire Imp",
-      effects: [gain_might: 4],
+      effects: [gain_might: 2],
       affinity_effects: [gain_might: 2],
-      cost: 4,
+      banish_effects: [gain_might: 4],
+      cost: 3,
       element: :fire,
-      shield: 4
+      shield: 3
     })
   end
 end

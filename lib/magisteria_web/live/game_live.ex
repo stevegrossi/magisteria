@@ -99,10 +99,22 @@ defmodule MagisteriaWeb.GameLive do
         </section>
         <section class="PlayBoard">
           <ul class="CardList mr-auto">
-            <li :for={card <- @state.summons[@state.current_player]}><.card card={card} /></li>
+            <li
+              :for={{card, index} <- Enum.with_index(@state.summons[@state.current_player])}
+              phx-click={if card.banish_effects != [], do: "banish_summon"}
+              phx-value-index={index}
+            >
+              <.card card={card} />
+            </li>
           </ul>
           <ul class="CardList">
-            <li :for={card <- @state.cards_played}><.card card={card} /></li>
+            <li
+              :for={{card, index} <- Enum.with_index(@state.cards_played)}
+              phx-click={if card.banish_effects != [], do: "banish_played"}
+              phx-value-index={index}
+            >
+              <.card card={card} />
+            </li>
           </ul>
           <ul class="CardList ml-auto">
             <li
@@ -172,6 +184,10 @@ defmodule MagisteriaWeb.GameLive do
         {card_text(@card.affinity_effects)}
         {if @card.affinity_applied, do: "✅"}
       </div>
+      <div :if={@card.banish_effects != []} class="Card-banish">
+        <strong>🗑️:</strong>
+        {card_text(@card.banish_effects)}
+      </div>
       <div :if={@card.shield} class="Card-shield">
         🛡️ <span class="Card-shieldNumber">{@card.shield}</span>
       </div>
@@ -225,6 +241,18 @@ defmodule MagisteriaWeb.GameLive do
 
   def handle_event("attack_summon", %{"index" => index}, socket) do
     new_state = Game.attack_summon(socket.assigns.state, String.to_integer(index))
+    {:noreply, assign(socket, state: new_state)}
+  end
+
+  def handle_event("banish_played", %{"index" => index}, socket) do
+    new_state = Game.banish_card(socket.assigns.state, :cards_played, String.to_integer(index))
+
+    {:noreply, assign(socket, state: new_state)}
+  end
+
+  def handle_event("banish_summon", %{"index" => index}, socket) do
+    new_state = Game.banish_card(socket.assigns.state, :summons, String.to_integer(index))
+
     {:noreply, assign(socket, state: new_state)}
   end
 

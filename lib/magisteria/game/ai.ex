@@ -6,6 +6,7 @@ defmodule Magisteria.Game.AI do
   alias Magisteria.Game
 
   def take_action(state) do
+    # TODO: banishing
     cond do
       must_discard?(state) -> discard_cards(state)
       has_unplayed_cards?(state) -> Game.play_all_cards(state)

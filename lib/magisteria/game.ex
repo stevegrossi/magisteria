@@ -119,6 +119,22 @@ defmodule Magisteria.Game do
     end
   end
 
+  def banish_card(state, :cards_played, index) do
+    {banished, remaining} = List.pop_at(state.cards_played, index)
+
+    state
+    |> apply_card_effects(banished, :banish_effects)
+    |> Map.put(:cards_played, remaining)
+  end
+
+  def banish_card(state, :summons, index) do
+    {banished, remaining} = List.pop_at(state.summons[state.current_player], index)
+
+    state
+    |> apply_card_effects(banished, :banish_effects)
+    |> put_in([:summons, state.current_player], remaining)
+  end
+
   def end_turn(state) do
     state
     |> reset_summon_affinities()

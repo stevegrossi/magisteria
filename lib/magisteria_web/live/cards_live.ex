@@ -53,6 +53,10 @@ defmodule MagisteriaWeb.CardsLive do
         {card_text(@card.affinity_effects)}
         {if @card.affinity_applied, do: "✅"}
       </div>
+      <div :if={@card.banish_effects != []} class="Card-banish">
+        <strong>🗑️:</strong>
+        {card_text(@card.banish_effects)}
+      </div>
       <div :if={@card.shield} class="Card-shield">
         🛡️ <span class="Card-shieldNumber">{@card.shield}</span>
       </div>

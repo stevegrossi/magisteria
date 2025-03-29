@@ -4,9 +4,8 @@ A deckbuilding card game in the vein of Star Realms and Ascension. Combine spell
 
 ## Future Ideas
 
-- Guardian protects you
+- Guardian protects you (blocks damage until killed)
 - Discard bonuses
-- scrapping
 - Gain X resource for every other card of this color you have in play
   - or enemy?
 - Ability effects: casting for 0 mana, putting cast spells directly into play instead of the discard pile
